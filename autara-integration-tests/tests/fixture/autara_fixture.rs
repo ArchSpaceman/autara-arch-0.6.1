@@ -1,14 +1,12 @@
 use arch_sdk::{
     arch_program::{bitcoin::key::Keypair, pubkey::Pubkey},
-    AsyncArchRpcClient,
+    AsyncArchRpcClient, Config,
 };
 use autara_client::{
     client::{
         client_with_signer::AutaraFullClientWithSigner, single_thread_client::AutaraReadClientImpl,
     },
-    config::{
-        autara_oracle_stage_program_id, autara_stage_admin, autara_stage_program_id, ArchConfig,
-    },
+    config::{autara_oracle_stage_program_id, autara_stage_admin, autara_stage_program_id},
     rpc_ext::ArchAsyncRpcExt,
     test::AutaraTestEnv,
     token_mint::TokenMint,
@@ -33,8 +31,7 @@ pub const MAX_UTILISATION_RATE: IFixedPoint = IFixedPoint::from_i64_u64_ratio(9,
 
 impl AutaraFixture {
     pub async fn new() -> Self {
-        let config = ArchConfig::dev();
-        let arch_client = config.arch_rpc_client();
+        let arch_client = AsyncArchRpcClient::new(&Config::localnet());
         let admin = autara_stage_admin();
         let env = AutaraTestEnv::new(
             arch_client.clone(),

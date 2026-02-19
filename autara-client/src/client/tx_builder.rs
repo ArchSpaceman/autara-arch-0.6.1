@@ -636,7 +636,7 @@ impl<'a, T: AutaraReadClient> AutaraTransactionBuilder<'a, T> {
             if let Some(cache) = self.blockhash_cache {
                 cache.get_blockhash()
             } else {
-                self.arch_client.get_best_block_hash().await?
+                self.arch_client.get_best_block_hash().await?.to_string()
             }
             .try_into()?,
         );
