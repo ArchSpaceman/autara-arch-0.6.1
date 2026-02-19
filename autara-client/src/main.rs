@@ -1,10 +1,13 @@
-use arch_sdk::arch_program::{bitcoin::Network, pubkey::Pubkey};
+use arch_sdk::{
+    arch_program::{bitcoin::Network, pubkey::Pubkey},
+    AsyncArchRpcClient, Config,
+};
 use autara_client::{
     client::{
         client_with_signer::AutaraFullClientWithSigner, read::AutaraReadClient,
         tx_broadcast::AutaraClientError,
     },
-    config::{autara_oracle_stage_program_id, autara_stage_program_id, ArchConfig},
+    config::{autara_oracle_stage_program_id, autara_stage_program_id},
     test::AutaraTestEnv,
 };
 use autara_lib::{
@@ -22,9 +25,7 @@ async fn main() -> Result<(), AutaraClientError> {
                 .from_env_lossy(),
         )
         .init();
-    let config = ArchConfig::dev();
-
-    let arch_client = config.arch_rpc_client();
+    let arch_client = AsyncArchRpcClient::new(&Config::localnet());
     let test_env = AutaraTestEnv::new(
         arch_client.clone(),
         autara_stage_program_id(),

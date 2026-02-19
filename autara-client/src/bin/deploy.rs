@@ -6,21 +6,14 @@ use autara_client::{
 };
 
 fn main() -> anyhow::Result<()> {
-    let config = Config {
-        node_endpoint: "".into(),
-        node_username: "".into(),
-        node_password: "".into(),
-        network: arch_sdk::arch_program::bitcoin::Network::Testnet4,
-        arch_node_url: "https://rpc.testnet.arch.network".into(),
-        titan_url: "".into(),
-    };
+    let config = Config::localnet();
     deploy_new_autara_pyth(&config);
     deploy_new_autara(&config);
     tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()?
         .block_on(async {
-            let arch_client = AsyncArchRpcClient::new(&config.arch_node_url);
+            let arch_client = AsyncArchRpcClient::new(&Config::localnet());
             let test_env = AutaraTestEnv::new(
                 arch_client.clone(),
                 autara_stage_program_id(),
@@ -31,7 +24,7 @@ fn main() -> anyhow::Result<()> {
             let pubkey = Pubkey::from_slice(&admin.x_only_public_key().0.serialize());
 
             arch_client
-                .create_and_fund_account_with_faucet(&admin, config.network)
+                .create_and_fund_account_with_faucet(&admin)
                 .await?;
 
             let autara_client = AutaraFullClientWithSigner::new_simple(

@@ -56,10 +56,11 @@ impl ArchConfig {
         }
     }
 
+    /*
     pub fn arch_rpc_client(&self) -> arch_sdk::AsyncArchRpcClient {
         arch_sdk::AsyncArchRpcClient::new(&self.arch_node_url)
     }
-
+    */
     pub async fn bitcoin_rpc_client(
         &self,
     ) -> bitcoincore_rpc_async::Result<bitcoincore_rpc_async::Client> {

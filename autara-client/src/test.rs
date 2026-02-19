@@ -27,6 +27,11 @@ pub fn deploy_program(config: &Config, key: &str, path: &str) -> Pubkey {
     client
         .create_and_fund_account_with_faucet(&authority_keypair)
         .expect("create and fund account with faucet should not fail");
+
+    client
+        .create_and_fund_account_with_faucet(&authority_keypair)
+        .expect("Failed to fund account a second time");
+
     if let Err(err) = ProgramDeployer::new(config).try_deploy_program(
         path.to_string(),
         program_keypair,
@@ -87,9 +92,9 @@ impl AutaraTestEnv {
         let (user_keypair, user_one_pubkey, _) = generate_new_keypair(BITCOIN_NETWORK);
         let (user_two_keypair, user_two_pubkey, _) = generate_new_keypair(BITCOIN_NETWORK);
         tokio::try_join!(
-            arch_client.create_and_fund_account_with_faucet(&user_keypair, BITCOIN_NETWORK),
-            arch_client.create_and_fund_account_with_faucet(&user_two_keypair, BITCOIN_NETWORK),
-            arch_client.create_and_fund_account_with_faucet(&authority_keypair, BITCOIN_NETWORK)
+            arch_client.create_and_fund_account_with_faucet(&user_keypair),
+            arch_client.create_and_fund_account_with_faucet(&user_two_keypair),
+            arch_client.create_and_fund_account_with_faucet(&authority_keypair)
         )?;
         let amounts = [
             (user_one_pubkey, 1 << 55),

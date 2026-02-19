@@ -1,9 +1,10 @@
 use arch_sdk::arch_program::pubkey::Pubkey;
+use arch_sdk::{AsyncArchRpcClient, Config};
 
 use autara_client::api::server::build_autara_server;
 use autara_client::client::client_with_signer::AutaraFullClientWithSigner;
 use autara_client::client::shared_autara_state::AutaraSharedState;
-use autara_client::config::{autara_oracle_stage_program_id, autara_stage_program_id, ArchConfig};
+use autara_client::config::{autara_oracle_stage_program_id, autara_stage_program_id};
 use autara_client::prometheus::autara_indexer::PrometheusAutaraIndexer;
 use autara_client::prometheus::exporter::PrometheusExporter;
 use autara_client::test::AutaraTestEnv;
@@ -29,8 +30,7 @@ async fn main() -> Result<(), anyhow::Error> {
         .with_env_filter(filter)
         .finish()
         .init();
-    let config = ArchConfig::dev();
-    let arch_client = config.arch_rpc_client();
+    let arch_client = AsyncArchRpcClient::new(&Config::localnet());
     let mut test_env = AutaraTestEnv::new(
         arch_client.clone(),
         autara_stage_program_id(),
@@ -52,7 +52,6 @@ async fn main() -> Result<(), anyhow::Error> {
         Pubkey::from_slice(&test_env.authority_keypair.x_only_public_key().0.serialize())
     );
 
-    let arch_client = config.arch_rpc_client();
     let autara_client = AutaraSharedState::new(
         arch_client.clone(),
         test_env.autara_program_pubkey,

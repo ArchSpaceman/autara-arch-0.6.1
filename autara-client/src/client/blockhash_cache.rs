@@ -16,7 +16,9 @@ impl BlockhashCache {
         arch_client: AsyncArchRpcClient,
         interval: Option<Duration>,
     ) -> Result<Self, arch_sdk::ArchError> {
-        let latest = Arc::new(RwLock::new(arch_client.get_best_block_hash().await?));
+        let latest = Arc::new(RwLock::new(
+            arch_client.get_best_block_hash().await?.to_string(),
+        ));
         let latest_clone = latest.clone();
         let interval = interval
             .unwrap_or(Duration::from_secs(3))
@@ -26,7 +28,7 @@ impl BlockhashCache {
                 tokio::time::sleep(interval).await;
                 match arch_client.get_best_block_hash().await {
                     Ok(blockhash) => {
-                        *latest_clone.write().unwrap() = blockhash;
+                        *latest_clone.write().unwrap() = blockhash.to_string();
                     }
                     Err(e) => {
                         tracing::error!("Error fetching blockhash: {:?}", e);
