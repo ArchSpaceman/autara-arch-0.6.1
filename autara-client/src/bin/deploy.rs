@@ -13,7 +13,7 @@ fn main() -> anyhow::Result<()> {
         .enable_all()
         .build()?
         .block_on(async {
-            let arch_client = AsyncArchRpcClient::new(&Config::localnet());
+            let arch_client = AsyncArchRpcClient::new(&config);
             let test_env = AutaraTestEnv::new(
                 arch_client.clone(),
                 autara_stage_program_id(),
